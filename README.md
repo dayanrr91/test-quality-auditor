@@ -35,6 +35,10 @@ In large companies it's common to have tests that technically cover code but don
 
 ### Web UI (Recommended)
 ```bash
+# Clone the repository
+git clone https://github.com/tu-usuario/test-quality-auditor.git
+cd test-quality-auditor
+
 # Launch the web application
 dotnet run --project TestQualityAuditor.Launcher
 ```
@@ -54,6 +58,9 @@ dotnet run --project TestQualityAuditor.CLI -- --project "path/to/project.csproj
 # With output to file
 dotnet run --project TestQualityAuditor.CLI -- --project "project.csproj" --output "report.json"
 ```
+
+### 🌐 Live Demo
+Visit the live demo at: [https://tu-usuario.github.io/test-quality-auditor](https://tu-usuario.github.io/test-quality-auditor)
 
 ## 🖥️ Web UI Features
 

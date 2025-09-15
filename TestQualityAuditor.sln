@@ -4,11 +4,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.Core", "TestQualityAuditor.Core\TestQualityAuditor.Core.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.CLI", "TestQualityAuditor.CLI\TestQualityAuditor.CLI.csproj", "{B2C3D4E5-F6G7-8901-BCDE-F23456789012}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.CLI", "TestQualityAuditor.CLI\TestQualityAuditor.CLI.csproj", "{22BEE0A3-F702-4394-A15E-BFB4A362C83A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.Web", "TestQualityAuditor.Web\TestQualityAuditor.Web.csproj", "{C3D4E5F6-G7H8-9012-CDEF-345678901234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.Web", "TestQualityAuditor.Web\TestQualityAuditor.Web.csproj", "{1D6E286B-C0B7-4F82-AC09-E33E2E630470}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.Launcher", "TestQualityAuditor.Launcher\TestQualityAuditor.Launcher.csproj", "{D4E5F6G7-H8I9-0123-DEFG-456789012345}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestQualityAuditor.Launcher", "TestQualityAuditor.Launcher\TestQualityAuditor.Launcher.csproj", "{EF8553BA-1821-4AC1-B5ED-2DA8A9A9874E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,17 +20,20 @@ Global
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2C3D4E5-F6G7-8901-BCDE-F23456789012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2C3D4E5-F6G7-8901-BCDE-F23456789012}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2C3D4E5-F6G7-8901-BCDE-F23456789012}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2C3D4E5-F6G7-8901-BCDE-F23456789012}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3D4E5F6-G7H8-9012-CDEF-345678901234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3D4E5F6-G7H8-9012-CDEF-345678901234}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3D4E5F6-G7H8-9012-CDEF-345678901234}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3D4E5F6-G7H8-9012-CDEF-345678901234}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4E5F6G7-H8I9-0123-DEFG-456789012345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4E5F6G7-H8I9-0123-DEFG-456789012345}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4E5F6G7-H8I9-0123-DEFG-456789012345}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4E5F6G7-H8I9-0123-DEFG-456789012345}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22BEE0A3-F702-4394-A15E-BFB4A362C83A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22BEE0A3-F702-4394-A15E-BFB4A362C83A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22BEE0A3-F702-4394-A15E-BFB4A362C83A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22BEE0A3-F702-4394-A15E-BFB4A362C83A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D6E286B-C0B7-4F82-AC09-E33E2E630470}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D6E286B-C0B7-4F82-AC09-E33E2E630470}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D6E286B-C0B7-4F82-AC09-E33E2E630470}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D6E286B-C0B7-4F82-AC09-E33E2E630470}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF8553BA-1821-4AC1-B5ED-2DA8A9A9874E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF8553BA-1821-4AC1-B5ED-2DA8A9A9874E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF8553BA-1821-4AC1-B5ED-2DA8A9A9874E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF8553BA-1821-4AC1-B5ED-2DA8A9A9874E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

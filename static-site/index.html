@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Quality Auditor</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+
+      .header p {
+        margin: 10px 0 0 0;
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 40px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin: 40px 0;
+      }
+
+      .feature-card {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+      }
+
+      .feature-card h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+      }
+
+      .feature-card p {
+        margin: 0;
+        color: #666;
+        line-height: 1.6;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 40px 0;
+      }
+
+      .metric-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .metric-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.5em;
+      }
+
+      .metric-card p {
+        margin: 0;
+        opacity: 0.9;
+      }
+
+      .cta {
+        text-align: center;
+        margin: 40px 0;
+      }
+
+      .btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: transform 0.3s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .footer {
+        background: #f8f9fa;
+        padding: 30px;
+        text-align: center;
+        color: #666;
+      }
+
+      .code-example {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔍 Test Quality Auditor</h1>
+        <p>Audit test quality beyond simple code coverage</p>
+      </div>
+
+      <div class="content">
+        <h2>🎯 Problem it solves</h2>
+        <p>
+          In large companies it's common to have tests that technically cover
+          code but don't add real value:
+        </p>
+        <ul>
+          <li>Tests that only cover happy path</li>
+          <li>Trivial assertions that never fail</li>
+          <li>Mock abuse that doesn't validate real behavior</li>
+          <li>Complex tests with multiple responsibilities</li>
+        </ul>
+
+        <div class="metrics">
+          <div class="metric-card">
+            <h3>📊 Completeness</h3>
+            <p>
+              Edge case coverage, exception validation, multiple assertions,
+              scenarios beyond happy path
+            </p>
+          </div>
+          <div class="metric-card">
+            <h3>✅ Correctness</h3>
+            <p>
+              Real assertions, balanced mock usage, real behavior validation,
+              tests that can fail
+            </p>
+          </div>
+          <div class="metric-card">
+            <h3>🔧 Maintainability</h3>
+            <p>
+              Code without duplication, controlled complexity, single
+              responsibilities, descriptive names
+            </p>
+          </div>
+        </div>
+
+        <h2>🚀 Quick Start</h2>
+        <div class="code-example">
+          # Clone the repository git clone
+          https://github.com/tu-usuario/test-quality-auditor.git cd
+          test-quality-auditor # Restore dependencies dotnet restore # Build
+          dotnet build # Launch Web UI dotnet run --project
+          TestQualityAuditor.Launcher
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🌐 Web UI</h3>
+            <p>
+              Interactive web interface with folder selection, automatic project
+              discovery, and detailed analysis results.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>📋 CLI Tool</h3>
+            <p>
+              Command-line interface for integration with CI/CD pipelines and
+              automated workflows.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>📊 Detailed Metrics</h3>
+            <p>
+              Comprehensive analysis of test quality with actionable
+              recommendations for improvement.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>🔍 Smart Detection</h3>
+            <p>
+              Identifies useless tests, mock abuse, trivial assertions, and
+              other quality issues.
+            </p>
+          </div>
+        </div>
+
+        <div class="cta">
+          <a
+            href="https://github.com/tu-usuario/test-quality-auditor"
+            class="btn"
+            >View on GitHub</a
+          >
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>&copy; 2024 Test Quality Auditor. Built with .NET 8 and ❤️</p>
+      </div>
+    </div>
+  </body>
+</html>
