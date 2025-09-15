@@ -1,0 +1,2 @@
+[config]
+command = dotnet publish TestQualityAuditor.Web.csproj --configuration Release --output ./bin
