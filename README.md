@@ -1,6 +1,6 @@
-# Test Quality Auditor
+# 🔍 Test Quality Auditor
 
-Tool for auditing test quality in .NET projects, measuring **Completeness**, **Correctness** and **Maintainability**.
+Herramienta CLI para auditar la calidad de tests en proyectos .NET, midiendo **Completeness**, **Correctness** y **Maintainability**.
 
 ## 🎯 Problem it solves
 
@@ -31,45 +31,94 @@ In large companies it's common to have tests that technically cover code but don
 - ✅ Descriptive names
 - ✅ Documentation
 
-## 🚀 Usage
+## 🚀 Cómo Usar
 
-### Web UI (Recommended)
+### Interfaz Web (Recomendado)
+La herramienta se ejecuta desde su propia carpeta y permite especificar qué proyecto analizar mediante configuración.
+
 ```bash
-# Clone the repository
+# 1. Clona e inicia la herramienta
 git clone https://github.com/tu-usuario/test-quality-auditor.git
 cd test-quality-auditor
 
-# Launch the web application
-dotnet run --project TestQualityAuditor.Launcher
-```
-Then open http://localhost:5000 in your browser.
-
-### CLI Tool
-```bash
-# Restore dependencies
+# 2. Restaura dependencias y ejecuta
 dotnet restore
+dotnet run --project TestQualityAuditor.Web
 
-# Build
-dotnet build
+# 3. Abre tu navegador en http://localhost:5000
 
-# Analyze test project
-dotnet run --project TestQualityAuditor.CLI -- --project "path/to/project.csproj"
+# 4. En la interfaz web, especifica la ruta de tu proyecto:
+#    C:\ruta\a\tu\proyecto
+#    /home/usuario/mi-proyecto
+#    D:\Desarrollo\MiApp
 
-# With output to file
-dotnet run --project TestQualityAuditor.CLI -- --project "project.csproj" --output "report.json"
+# 5. Haz clic en "🔍 Analizar Tests"
 ```
 
-### 🌐 Live Demo
-Visit the live demo at: [https://tu-usuario.github.io/test-quality-auditor](https://tu-usuario.github.io/test-quality-auditor)
+**La aplicación ofrece dos modos:**
 
-## 🖥️ Web UI Features
+**📊 Análisis en Vivo:**
+- 🔍 Escanea el directorio especificado buscando proyectos de test
+- 📊 Los clasifica como Unit Tests o Integration Tests  
+- 📋 Muestra resultados organizados en tabs separadas por tipo
+- ⚡ Ejecuta el análisis completo y muestra métricas detalladas
 
-- **📁 Folder Selection**: Browse and select root directories containing test projects
-- **🔍 Automatic Discovery**: Finds all test projects within the selected directory
-- **📊 Interactive Results**: Sortable table with test quality metrics
-- **📋 Copy Test Names**: Click the clipboard icon to copy test names for searching in code
-- **💡 Recommendations**: Actionable suggestions for improving test quality
-- **📱 Responsive Design**: Works on desktop and mobile devices
+**📄 Cargar JSON:**
+- 📂 Carga reportes JSON generados previamente por la CLI
+- 🎯 Mantiene las mismas tabs separadas por tipo de test
+- ⚡ Visualización instantánea sin necesidad de re-analizar
+- 🔄 Perfecto para compartir resultados o revisiones offline
+
+### Herramienta CLI
+```bash
+# Analizar proyecto específico (.csproj)
+dotnet run --project TestQualityAuditor.CLI -- --project "C:\MiApp\Tests\MyApp.Tests.csproj"
+
+# Analizar todos los tests en un directorio
+dotnet run --project TestQualityAuditor.CLI -- --project "C:\MiApp\"
+
+# Con salida a archivo JSON
+dotnet run --project TestQualityAuditor.CLI -- --project "C:\MiApp\" --output "report.json"
+
+# Ver ayuda
+dotnet run --project TestQualityAuditor.CLI -- --help
+```
+
+#### 🎯 Ejemplos de Uso CLI
+
+**Analizar proyecto específico:**
+```bash
+dotnet run --project TestQualityAuditor.CLI -- --project "D:\MyApp\Tests\MyApp.UnitTests.csproj"
+```
+
+**Analizar directorio completo (recomendado):**
+```bash
+dotnet run --project TestQualityAuditor.CLI -- --project "D:\MyApp\"
+```
+
+**Generar reporte JSON:**
+```bash
+dotnet run --project TestQualityAuditor.CLI -- --project "D:\MyApp\" --output "test-quality-report.json"
+```
+
+## 🖥️ Características de la Interfaz Web
+
+- **🔍 Detección Automática**: Encuentra todos los proyectos de test en el directorio actual
+- **📊 Clasificación Inteligente**: Separa Unit Tests e Integration Tests automáticamente
+- **📋 Navegación por Tabs**: Resultados organizados en pestañas separadas por tipo
+- **📈 Métricas Interactivas**: Tabla ordenable con métricas de calidad de tests
+- **📋 Copiar Nombres**: Haz clic en el icono del portapapeles para copiar nombres de tests
+- **💡 Recomendaciones**: Sugerencias accionables para mejorar la calidad de tests
+- **📱 Diseño Responsive**: Funciona en desktop y dispositivos móviles
+
+### Tipos de Test Detectados Automáticamente
+
+**Integration Tests** - Proyectos que contienen:
+- `integration`, `integrationtest`, `integrationtests`
+- `e2e`, `endtoend`, `functional`, `acceptance`
+
+**Unit Tests** - Proyectos que contienen:
+- `unit`, `unittest`, `unittests`, `test`, `tests`
 
 ## 📋 Example output
 
@@ -103,14 +152,30 @@ Analyzed: 2024-01-15 14:30:00
 • UserService.DeleteUser (3.8/10)
 ```
 
-## 🔧 Installation
+## 🔧 Instalación y Configuración
 
+### Instalación Única
 ```bash
-git clone <repo>
-cd TestQualityAuditor
+# 1. Clona el repositorio en tu ubicación preferida
+git clone https://github.com/tu-usuario/test-quality-auditor.git
+cd test-quality-auditor
+
+# 2. Restaura dependencias
 dotnet restore
 dotnet build
+
+# 3. Ya puedes usar la herramienta para analizar cualquier proyecto
+dotnet run --project TestQualityAuditor.Web
+
+# 4. La herramienta se ejecuta en http://localhost:5000
+#    Desde ahí puedes especificar cualquier ruta de proyecto a analizar
 ```
+
+### 🎯 Ventajas de este Enfoque
+- ✅ **Una sola instalación** - La herramienta vive en su propia carpeta
+- ✅ **Analiza cualquier proyecto** - Solo especifica la ruta en la interfaz
+- ✅ **No contamina proyectos** - No necesitas clonar nada en tus proyectos
+- ✅ **Reutilizable** - Analiza múltiples proyectos desde la misma instalación
 
 ## 🏗️ Architecture
 
@@ -178,15 +243,72 @@ public void Should_ThrowException_When_InvalidEmail()
 }
 ```
 
+## ⚡ Flujo de Trabajo Típico
+
+### 🚀 Comando Unificado (Súper Fácil)
+```bash
+# ¡TODO EN UN SOLO COMANDO! 🎉
+dotnet run --project TestQualityAuditor.Launcher -- "C:\MiApp\"
+
+# Esto automáticamente:
+# 1. 🔍 Ejecuta el análisis CLI
+# 2. 📄 Genera el reporte.json  
+# 3. 🌐 Levanta la interfaz web
+# 4. 🎯 Abre el navegador con el reporte cargado
+```
+
+### Flujo Manual (Si prefieres paso a paso)
+```bash
+# 1. Generar reporte con CLI
+dotnet run --project TestQualityAuditor.CLI -- --project "C:\MiApp\" --output "reporte.json"
+
+# 2. Iniciar interfaz web (desde la misma carpeta)
+dotnet run --project TestQualityAuditor.Web
+
+# 3. Abrir http://localhost:5000 → ¡Se carga automáticamente!
+```
+
+### 🎯 Comportamiento Automático
+
+**✅ Si existe `reporte.json`:**
+- Carga automáticamente al abrir la página
+- Muestra resultados organizados en tabs:
+  - 📊 **All Tests** - Vista general
+  - 🧪 **Unit Tests** - Solo tests unitarios  
+  - 🔗 **Integration Tests** - Solo tests de integración
+
+**❌ Si NO existe `reporte.json`:**
+- Muestra mensaje indicando que no hay reporte
+- Proporciona instrucciones para generar uno
+
+### 💡 Ejemplos de Rutas Válidas
+
+**Windows:**
+```
+C:\Desarrollo\MiApp
+D:\Proyectos\Backend\Tests
+C:\Users\Usuario\source\repos\MiProyecto
+```
+
+**Linux/Mac:**
+```
+/home/usuario/proyectos/mi-app
+/Users/usuario/Development/backend
+/opt/proyectos/tests
+```
+
 ## 🚀 Roadmap
 
+- [x] **Detección automática de proyectos de test**
+- [x] **Clasificación Unit vs Integration tests**
+- [x] **Interfaz con tabs separadas por tipo**
 - [ ] CI/CD integration
-- [ ] Web dashboard with charts
-- [ ] Historical metrics comparison
-- [ ] SonarQube integration
-- [ ] Support for more test frameworks (xUnit, MSTest)
-- [ ] Real coverage vs "fake" coverage analysis
-- [ ] Detection of tests that never fail
+- [ ] Exportar reportes a PDF/Excel
+- [ ] Métricas históricas y comparación
+- [ ] Integración con SonarQube
+- [ ] Soporte para más frameworks (xUnit, MSTest)
+- [ ] Análisis de cobertura real vs "falsa"
+- [ ] Detección de tests que nunca fallan
 
 ## 🤝 Contributing
 
@@ -199,3 +321,5 @@ public void Should_ThrowException_When_InvalidEmail()
 ## 📄 License
 
 This project is under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Example: dotnet run --project TestQualityAuditor.Launcher -- "D:\Work\tam\SampleTestProject"

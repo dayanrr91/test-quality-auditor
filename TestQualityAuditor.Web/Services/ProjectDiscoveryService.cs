@@ -33,6 +33,37 @@ public class ProjectDiscoveryService
         return testProjects;
     }
 
+    public string DetermineTestType(string projectPath)
+    {
+        var projectName = Path.GetFileNameWithoutExtension(projectPath).ToLower();
+
+        // Patrones comunes para integration tests
+        var integrationPatterns = new[]
+        {
+            "integration", "integrationtest", "integrationtests",
+            "e2e", "endtoend", "functional", "acceptance"
+        };
+
+        if (integrationPatterns.Any(pattern => projectName.Contains(pattern)))
+        {
+            return "Integration";
+        }
+
+        // Patrones comunes para unit tests
+        var unitPatterns = new[]
+        {
+            "unit", "unittest", "unittests", "test", "tests"
+        };
+
+        if (unitPatterns.Any(pattern => projectName.Contains(pattern)))
+        {
+            return "Unit";
+        }
+
+        // Por defecto, asumimos que es unit test
+        return "Unit";
+    }
+
     private bool IsTestProject(string projectPath)
     {
         var fileName = Path.GetFileNameWithoutExtension(projectPath);

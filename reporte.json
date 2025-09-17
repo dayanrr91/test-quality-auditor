@@ -1,0 +1,145 @@
+[
+  {
+    "ProjectPath": "D:\\Work\\tam\\SampleTestProject\\SampleTestProject.csproj",
+    "TestType": "Unit",
+    "OverallCoverage": 0,
+    "AverageScore": 7.74,
+    "TestResults": [
+      {
+        "TestMethodName": "Test1",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 0,
+          "Correctness": 10,
+          "Maintainability": 8,
+          "OverallScore": 5.6,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "TestUser",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 0,
+          "Correctness": 7,
+          "Maintainability": 7,
+          "OverallScore": 4.2,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "TestNeverFails",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 4,
+          "Correctness": 10,
+          "Maintainability": 7,
+          "OverallScore": 7.0,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "TestComplexMethod",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 10,
+          "Correctness": 10,
+          "Maintainability": 8,
+          "OverallScore": 9.6,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "Should_CreateUser_When_ValidData",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 9,
+          "Correctness": 10,
+          "Maintainability": 9,
+          "OverallScore": 9.4,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "Should_ThrowValidationException_When_EmptyName",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 6,
+          "Correctness": 10,
+          "Maintainability": 8,
+          "OverallScore": 8.0,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "Should_ThrowValidationException_When_InvalidEmail",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 6,
+          "Correctness": 10,
+          "Maintainability": 8,
+          "OverallScore": 8.0,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "Should_ThrowValidationException_When_NullEmail",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 6,
+          "Correctness": 10,
+          "Maintainability": 8,
+          "OverallScore": 8.0,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "Should_GetUser_When_ValidId",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 9,
+          "Correctness": 10,
+          "Maintainability": 9,
+          "OverallScore": 9.4,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      },
+      {
+        "TestMethodName": "Should_ThrowArgumentException_When_UserNotFound",
+        "TestClassName": "UserServiceTests",
+        "Metrics": {
+          "Completeness": 6,
+          "Correctness": 10,
+          "Maintainability": 9,
+          "OverallScore": 8.2,
+          "Problems": [],
+          "Details": {}
+        },
+        "Issues": []
+      }
+    ],
+    "Recommendations": [
+      "Improve edge case coverage and error scenarios",
+      "Review 1 tests with low scores"
+    ],
+    "AnalyzedAt": "2025-09-17T14:22:39.6928486+02:00"
+  }
+]

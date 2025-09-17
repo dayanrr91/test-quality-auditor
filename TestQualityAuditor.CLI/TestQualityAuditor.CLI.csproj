@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TestQualityAuditor.Core\TestQualityAuditor.Core.csproj" />
+        <ProjectReference Include="..\TestQualityAuditor.Web\TestQualityAuditor.Web.csproj" />
     </ItemGroup>
 
     <ItemGroup>

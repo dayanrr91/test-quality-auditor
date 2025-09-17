@@ -28,21 +28,26 @@ public class AnalysisController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrEmpty(request.RootPath) || !Directory.Exists(request.RootPath))
+            var targetPath = string.IsNullOrEmpty(request.RootPath)
+                ? Directory.GetCurrentDirectory()
+                : request.RootPath;
+
+            if (!Directory.Exists(targetPath))
             {
-                return BadRequest("Invalid root path provided");
+                return BadRequest($"Directory does not exist: {targetPath}");
             }
 
-            var testProjects = _projectDiscovery.DiscoverTestProjects(request.RootPath);
+            var testProjects = _projectDiscovery.DiscoverTestProjects(targetPath);
 
             var response = new DiscoverProjectsResponse
             {
-                RootPath = request.RootPath,
+                RootPath = targetPath,
                 TestProjects = testProjects.Select(p => new ProjectInfo
                 {
                     Path = p,
                     Name = Path.GetFileNameWithoutExtension(p),
-                    RelativePath = Path.GetRelativePath(request.RootPath, p)
+                    RelativePath = Path.GetRelativePath(targetPath, p),
+                    TestType = _projectDiscovery.DetermineTestType(p)
                 }).ToList()
             };
 
@@ -75,17 +80,78 @@ public class AnalysisController : ControllerBase
         }
     }
 
+    [HttpGet("load-report")]
+    public IActionResult LoadReport()
+    {
+        try
+        {
+            var currentDir = Directory.GetCurrentDirectory();
+            var parentDir = Directory.GetParent(currentDir)?.FullName ?? currentDir;
+
+            _logger.LogInformation($"Current directory: {currentDir}");
+            _logger.LogInformation($"Parent directory: {parentDir}");
+
+            // Buscar en múltiples ubicaciones posibles
+            var possiblePaths = new[]
+            {
+                Path.Combine(parentDir, "reporte.json"),           // Directorio padre
+                Path.Combine(currentDir, "reporte.json"),          // Directorio actual
+                Path.Combine(currentDir, "..", "reporte.json"),    // Relativo al padre
+                "reporte.json"                                     // Directorio de trabajo
+            };
+
+            string? foundPath = null;
+            foreach (var path in possiblePaths)
+            {
+                var fullPath = Path.GetFullPath(path);
+                _logger.LogInformation($"Checking path: {fullPath}");
+
+                if (System.IO.File.Exists(fullPath))
+                {
+                    foundPath = fullPath;
+                    _logger.LogInformation($"Found report at: {foundPath}");
+                    break;
+                }
+            }
+
+            if (foundPath == null)
+            {
+                _logger.LogWarning("Report file not found in any of the expected locations");
+                return NotFound(new
+                {
+                    message = "No se encontró el archivo reporte.json",
+                    searchedPaths = possiblePaths.Select(Path.GetFullPath).ToArray(),
+                    currentDirectory = currentDir
+                });
+            }
+
+            var jsonContent = System.IO.File.ReadAllText(foundPath);
+            var reportData = System.Text.Json.JsonSerializer.Deserialize<object>(jsonContent);
+
+            return Ok(reportData);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading report");
+            return StatusCode(500, new { message = "Error al cargar el reporte: " + ex.Message });
+        }
+    }
+
     [HttpPost("analyze-all")]
     public async Task<IActionResult> AnalyzeAllProjects([FromBody] AnalyzeAllProjectsRequest request)
     {
         try
         {
-            if (string.IsNullOrEmpty(request.RootPath) || !Directory.Exists(request.RootPath))
+            var targetPath = string.IsNullOrEmpty(request.RootPath)
+                ? Directory.GetCurrentDirectory()
+                : request.RootPath;
+
+            if (!Directory.Exists(targetPath))
             {
-                return BadRequest("Invalid root path provided");
+                return BadRequest($"Directory does not exist: {targetPath}");
             }
 
-            var testProjects = _projectDiscovery.DiscoverTestProjects(request.RootPath);
+            var testProjects = _projectDiscovery.DiscoverTestProjects(targetPath);
             var results = new List<ProjectAnalysisResult>();
 
             foreach (var projectPath in testProjects)
@@ -93,6 +159,7 @@ public class AnalysisController : ControllerBase
                 try
                 {
                     var result = await _analyzer.AnalyzeProject(projectPath);
+                    result.TestType = _projectDiscovery.DetermineTestType(projectPath);
                     results.Add(result);
                 }
                 catch (Exception ex)
@@ -128,6 +195,7 @@ public class ProjectInfo
     public string Path { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string RelativePath { get; set; } = string.Empty;
+    public string TestType { get; set; } = string.Empty;
 }
 
 public class AnalyzeProjectRequest

@@ -29,6 +29,7 @@ public class TestIssue
 public class ProjectAnalysisResult
 {
     public string ProjectPath { get; set; } = string.Empty;
+    public string TestType { get; set; } = string.Empty;
     public decimal OverallCoverage { get; set; }
     public decimal AverageScore { get; set; }
     public List<TestAnalysisResult> TestResults { get; set; } = new();

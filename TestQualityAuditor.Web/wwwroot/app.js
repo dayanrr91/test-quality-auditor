@@ -1,213 +1,318 @@
 class TestQualityAuditor {
   constructor() {
-    this.selectedPath = null;
     this.discoveredProjects = [];
+    this.analysisResults = [];
     this.initializeEventListeners();
+    this.loadReportAutomatically();
   }
 
   initializeEventListeners() {
-    const selectFolderBtn = document.getElementById("selectFolderBtn");
-    const folderPathInput = document.getElementById("folderPathInput");
-    const analyzeBtn = document.getElementById("analyzeBtn");
-
-    selectFolderBtn.addEventListener("click", () => {
-      this.handleFolderSelection();
-    });
-
-    folderPathInput.addEventListener("keypress", (event) => {
-      if (event.key === "Enter") {
-        this.handleFolderSelection();
-      }
-    });
-
-    analyzeBtn.addEventListener("click", () => {
-      this.analyzeAllProjects();
+    // Results tabs
+    const tabButtons = document.querySelectorAll(".tab-button");
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        this.switchTab(e.target.dataset.tab);
+      });
     });
   }
 
-  handleFolderSelection() {
-    const folderPathInput = document.getElementById("folderPathInput");
-    const fullPath = folderPathInput.value.trim();
-
-    if (!fullPath) {
-      alert("Please enter a folder path");
-      return;
-    }
-
-    this.selectedPath = fullPath;
-
-    // Show selected path
-    const selectedPathDiv = document.getElementById("selectedPath");
-    selectedPathDiv.textContent = `Selected: ${fullPath}`;
-    selectedPathDiv.classList.remove("hidden");
-
-    // Show analyze button
-    const analyzeBtn = document.getElementById("analyzeBtn");
-    analyzeBtn.classList.remove("hidden");
-
-    // Discover projects
-    this.discoverProjects(fullPath);
-  }
-
-  async discoverProjects(rootPath) {
+  async loadReportAutomatically() {
+    console.log("🔍 Iniciando carga automática del reporte...");
     this.showLoading(true);
     this.hideError();
 
     try {
-      const response = await fetch("/api/analysis/discover-projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ rootPath: rootPath }),
-      });
+      console.log("📡 Haciendo petición a /api/analysis/load-report");
+      const response = await fetch("/api/analysis/load-report");
+      console.log(
+        "📡 Respuesta recibida:",
+        response.status,
+        response.statusText
+      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.status === 404) {
+        console.log("❌ No hay reporte disponible (404)");
+        this.showNoReportMessage();
+        return;
       }
 
-      const data = await response.json();
-      this.discoveredProjects = data.testProjects;
-      this.displayDiscoveredProjects(data);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ Error en respuesta:", response.status, errorText);
+        throw new Error(
+          `HTTP error! status: ${response.status} - ${errorText}`
+        );
+      }
+
+      console.log("📄 Parseando JSON...");
+      const reportData = await response.json();
+      console.log("✅ JSON parseado correctamente:", reportData);
+
+      console.log("🔄 Cargando resultados...");
+      this.loadJsonResults(reportData);
+
+      // Actualizar mensaje de estado
+      const statusMessage = document.getElementById("statusMessage");
+      statusMessage.textContent = "✅ Reporte cargado automáticamente";
+      statusMessage.style.color = "#28a745";
+      console.log("✅ Reporte cargado exitosamente!");
     } catch (error) {
-      console.error("Error discovering projects:", error);
-      this.showError("Error discovering test projects: " + error.message);
+      console.error("❌ Error loading report:", error);
+      this.showError("Error cargando el reporte: " + error.message);
     } finally {
       this.showLoading(false);
     }
   }
 
-  displayDiscoveredProjects(data) {
+  showNoReportMessage() {
+    const noReportMessage = document.getElementById("noReportMessage");
+    const statusMessage = document.getElementById("statusMessage");
+
+    statusMessage.textContent = "❌ No se encontró reporte.json";
+    statusMessage.style.color = "#dc3545";
+    noReportMessage.classList.remove("hidden");
+  }
+
+  loadJsonResults(jsonData) {
+    console.log("🔄 Procesando datos JSON:", jsonData);
+    this.hideError();
+    this.hideResults();
+
+    try {
+      // Check if it's a single project or array of projects
+      let results = Array.isArray(jsonData) ? jsonData : [jsonData];
+      console.log("📊 Resultados procesados:", results);
+
+      // Validate that results have the expected structure
+      results.forEach((result, index) => {
+        console.log(`📋 Proyecto ${index} COMPLETO:`, result);
+        console.log(`📋 Proyecto ${index} DETALLES:`, {
+          projectPath: result.projectPath,
+          testType: result.testType,
+          testResults: result.testResults
+            ? result.testResults.length
+            : "undefined",
+          allKeys: Object.keys(result),
+        });
+
+        // Log all properties to understand the structure
+        console.log("🔍 TODAS LAS PROPIEDADES:");
+        Object.keys(result).forEach((key) => {
+          console.log(`  ${key}:`, result[key]);
+        });
+      });
+
+      // Show projects list for JSON data
+      this.displayJsonProjects(results);
+
+      this.analysisResults = results;
+      this.displayResults(results);
+    } catch (error) {
+      console.error("❌ Error procesando JSON:", error);
+      this.showError("Error procesando el reporte: " + error.message);
+    }
+  }
+
+  displayJsonProjects(results) {
     const projectsList = document.getElementById("projectsList");
     const projectsContainer = document.getElementById("projectsContainer");
 
-    if (data.testProjects.length === 0) {
+    if (results.length === 0) {
       projectsContainer.innerHTML =
-        "<p>No test projects found in the selected directory.</p>";
+        "<p>No se encontraron datos en el archivo JSON.</p>";
     } else {
-      projectsContainer.innerHTML = data.testProjects
-        .map(
-          (project) => `
+      projectsContainer.innerHTML = `
+        <div style="margin-bottom: 15px; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+          <strong>📄 Cargado desde archivo JSON</strong> - ${
+            results.length
+          } proyecto(s)
+        </div>
+        ${results
+          .map((project) => {
+            const projectName = project.projectPath
+              ? project.projectPath.split("\\").pop().replace(".csproj", "")
+              : "Proyecto desconocido";
+            const testType = project.testType || "Unit";
+
+            return `
                 <div class="project-item">
                     <div class="project-info">
-                        <div class="project-name">${project.name}</div>
-                        <div class="project-path">${project.relativePath}</div>
+                        <div class="project-name">
+                            ${projectName}
+                            <span class="test-type-badge test-type-${testType.toLowerCase()}">
+                                ${testType}
+                            </span>
+                        </div>
+                        <div class="project-path">${
+                          project.projectPath || "Ruta no disponible"
+                        }</div>
                     </div>
                 </div>
-            `
-        )
-        .join("");
+              `;
+          })
+          .join("")}
+      `;
     }
 
     projectsList.classList.remove("hidden");
   }
 
-  async analyzeAllProjects() {
-    if (!this.selectedPath) return;
+  switchTab(tabName) {
+    // Remove active class from all tabs and buttons
+    document
+      .querySelectorAll(".tab-button")
+      .forEach((btn) => btn.classList.remove("active"));
+    document
+      .querySelectorAll(".tab-content")
+      .forEach((content) => content.classList.remove("active"));
 
-    this.showLoading(true);
-    this.hideError();
-    this.hideResults();
-
-    try {
-      const response = await fetch("/api/analysis/analyze-all", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ rootPath: this.selectedPath }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const results = await response.json();
-      this.displayResults(results);
-    } catch (error) {
-      console.error("Error analyzing projects:", error);
-      this.showError("Error analyzing projects: " + error.message);
-    } finally {
-      this.showLoading(false);
-    }
+    // Add active class to selected tab and button
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add("active");
+    document.getElementById(`${tabName}TestsTab`).classList.add("active");
   }
 
   displayResults(results) {
+    console.log("📊 Mostrando resultados:", results);
     const resultsDiv = document.getElementById("results");
-    const resultsContainer = document.getElementById("resultsContainer");
 
-    if (results.length === 0) {
-      resultsContainer.innerHTML = "<p>No analysis results available.</p>";
-    } else {
-      let html = "";
+    try {
+      // Validate results
+      if (!results || !Array.isArray(results)) {
+        throw new Error("Los resultados no son válidos o no es un array");
+      }
 
-      // Overall summary
-      const totalTests = results.reduce(
-        (sum, project) => sum + project.testResults.length,
-        0
+      // Separate results by test type (handle both camelCase and PascalCase)
+      const unitResults = results.filter(
+        (r) => (r.testType || r.TestType) === "Unit"
       );
+      const integrationResults = results.filter(
+        (r) => (r.testType || r.TestType) === "Integration"
+      );
+
+      console.log("🧪 Unit tests:", unitResults.length);
+      console.log("🔗 Integration tests:", integrationResults.length);
+
+      // Display all results
+      this.displayResultsInContainer(results, "allResultsContainer");
+
+      // Display unit test results
+      this.displayResultsInContainer(unitResults, "unitResultsContainer");
+
+      // Display integration test results
+      this.displayResultsInContainer(
+        integrationResults,
+        "integrationResultsContainer"
+      );
+
+      resultsDiv.classList.remove("hidden");
+    } catch (error) {
+      console.error("❌ Error mostrando resultados:", error);
+      this.showError("Error mostrando resultados: " + error.message);
+    }
+  }
+
+  displayResultsInContainer(results, containerId) {
+    const container = document.getElementById(containerId);
+
+    if (!results || results.length === 0) {
+      container.innerHTML =
+        "<p>No analysis results available for this test type.</p>";
+      return;
+    }
+
+    let html = "";
+
+    try {
+      // Overall summary for this category
+      const totalTests = results.reduce((sum, project) => {
+        const testResults = project.testResults || project.TestResults || [];
+        const projectPath =
+          project.projectPath || project.ProjectPath || "Unknown";
+        console.log(`📊 Proyecto ${projectPath}: ${testResults.length} tests`);
+        return sum + testResults.length;
+      }, 0);
       const averageScore =
-        results.reduce((sum, project) => sum + project.averageScore, 0) /
-        results.length;
+        results.length > 0
+          ? results.reduce((sum, project) => {
+              const score = project.averageScore || project.AverageScore || 0;
+              return sum + score;
+            }, 0) / results.length
+          : 0;
 
       html += `
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-value">${results.length}</div>
-                        <div class="metric-label">Projects Analyzed</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">${totalTests}</div>
-                        <div class="metric-label">Total Tests</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">${averageScore.toFixed(
-                          1
-                        )}/10</div>
-                        <div class="metric-label">Average Score</div>
-                    </div>
-                </div>
-            `;
+      <div class="metrics-grid">
+          <div class="metric-card">
+              <div class="metric-value">${results.length}</div>
+              <div class="metric-label">Projects Analyzed</div>
+          </div>
+          <div class="metric-card">
+              <div class="metric-value">${totalTests}</div>
+              <div class="metric-label">Total Tests</div>
+          </div>
+          <div class="metric-card">
+              <div class="metric-value">${averageScore.toFixed(1)}/10</div>
+              <div class="metric-label">Average Score</div>
+          </div>
+      </div>
+    `;
 
       // Individual project results
       results.forEach((project) => {
         html += this.createProjectResultsHtml(project);
       });
 
-      resultsContainer.innerHTML = html;
+      container.innerHTML = html;
+    } catch (error) {
+      console.error(
+        `❌ Error en displayResultsInContainer (${containerId}):`,
+        error
+      );
+      container.innerHTML = `<p>Error mostrando resultados: ${error.message}</p>`;
     }
-
-    resultsDiv.classList.remove("hidden");
   }
 
   createProjectResultsHtml(project) {
-    const projectName = project.projectPath
-      .split("\\")
-      .pop()
-      .replace(".csproj", "");
+    console.log("🏗️ Creando HTML para proyecto:", project);
+
+    // Handle cases where projectPath might be undefined or have different property names
+    const projectPath =
+      project.projectPath || project.ProjectPath || "Unknown path";
+    const testType = project.testType || project.TestType || "Unit";
+    const testResults = project.testResults || project.TestResults || [];
+    const averageScore = project.averageScore || project.AverageScore || 0;
+
+    const projectName =
+      projectPath !== "Unknown path"
+        ? projectPath
+            .split(/[\\\/]/)
+            .pop()
+            .replace(".csproj", "")
+        : "Proyecto desconocido";
+
+    const testTypeBadge = testType
+      ? `<span class="test-type-badge test-type-${testType.toLowerCase()}">${testType}</span>`
+      : "";
 
     let html = `
             <div class="card">
-                <h3>📁 ${projectName}</h3>
-                <p><strong>Path:</strong> ${project.projectPath}</p>
+                <h3>📁 ${projectName} ${testTypeBadge}</h3>
+                <p><strong>Path:</strong> ${projectPath}</p>
                 
                 <div class="metrics-grid">
                     <div class="metric-card">
-                        <div class="metric-value">${project.averageScore.toFixed(
+                        <div class="metric-value">${averageScore.toFixed(
                           1
                         )}/10</div>
                         <div class="metric-label">Overall Score</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">${
-                          project.testResults.length
-                        }</div>
+                        <div class="metric-value">${testResults.length}</div>
                         <div class="metric-label">Tests Found</div>
                     </div>
                 </div>
         `;
 
-    if (project.testResults.length > 0) {
+    if (testResults.length > 0) {
       html += `
                  <div class="table-container">
                      <table class="tests-table">
@@ -223,11 +328,36 @@ class TestQualityAuditor {
                          <tbody>
              `;
 
-      project.testResults
-        .sort((a, b) => b.metrics.overallScore - a.metrics.overallScore)
+      testResults
+        .sort((a, b) => {
+          // Handle both camelCase and PascalCase property names
+          const scoreA =
+            (a.metrics && a.metrics.overallScore) ||
+            (a.Metrics && a.Metrics.OverallScore) ||
+            0;
+          const scoreB =
+            (b.metrics && b.metrics.overallScore) ||
+            (b.Metrics && b.Metrics.OverallScore) ||
+            0;
+          return scoreB - scoreA;
+        })
         .forEach((test) => {
-          const fullTestName = `${test.testClassName}.${test.testMethodName}`;
+          const testClassName =
+            test.testClassName || test.TestClassName || "Unknown";
+          const testMethodName =
+            test.testMethodName || test.TestMethodName || "Unknown";
+          const fullTestName = `${testClassName}.${testMethodName}`;
           const displayName = this.truncateText(fullTestName, 50);
+
+          // Handle both camelCase and PascalCase metrics
+          const metrics = test.metrics || test.Metrics || {};
+          const completeness =
+            metrics.completeness || metrics.Completeness || 0;
+          const correctness = metrics.correctness || metrics.Correctness || 0;
+          const maintainability =
+            metrics.maintainability || metrics.Maintainability || 0;
+          const overallScore =
+            metrics.overallScore || metrics.OverallScore || 0;
 
           html += `
                          <tr>
@@ -242,25 +372,17 @@ class TestQualityAuditor {
                                  </div>
                              </td>
                              <td><span class="score ${this.getScoreClass(
-                               test.metrics.completeness
-                             )}">${test.metrics.completeness.toFixed(
-            1
-          )}</span></td>
+                               completeness
+                             )}">${completeness.toFixed(1)}</span></td>
                              <td><span class="score ${this.getScoreClass(
-                               test.metrics.correctness
-                             )}">${test.metrics.correctness.toFixed(
-            1
-          )}</span></td>
+                               correctness
+                             )}">${correctness.toFixed(1)}</span></td>
                              <td><span class="score ${this.getScoreClass(
-                               test.metrics.maintainability
-                             )}">${test.metrics.maintainability.toFixed(
-            1
-          )}</span></td>
+                               maintainability
+                             )}">${maintainability.toFixed(1)}</span></td>
                              <td><span class="score ${this.getScoreClass(
-                               test.metrics.overallScore
-                             )}">${test.metrics.overallScore.toFixed(
-            1
-          )}</span></td>
+                               overallScore
+                             )}">${overallScore.toFixed(1)}</span></td>
                          </tr>
                      `;
         });
@@ -268,12 +390,14 @@ class TestQualityAuditor {
       html += "</tbody></table></div>";
     }
 
-    if (project.recommendations && project.recommendations.length > 0) {
+    const recommendations =
+      project.recommendations || project.Recommendations || [];
+    if (recommendations.length > 0) {
       html += `
                 <div class="recommendations">
                     <h3>💡 Recommendations</h3>
                     <ul>
-                        ${project.recommendations
+                        ${recommendations
                           .map((rec) => `<li>${rec}</li>`)
                           .join("")}
                     </ul>
@@ -294,14 +418,11 @@ class TestQualityAuditor {
 
   showLoading(show) {
     const loading = document.getElementById("loading");
-    const analyzeBtn = document.getElementById("analyzeBtn");
 
     if (show) {
       loading.classList.remove("hidden");
-      analyzeBtn.disabled = true;
     } else {
       loading.classList.add("hidden");
-      analyzeBtn.disabled = false;
     }
   }
 
